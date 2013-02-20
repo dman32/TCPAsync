@@ -1,0 +1,9 @@
+C:\GIT\TCPAsync\bin\Debug\TCPAsync.exe
+C:\GIT\TCPAsync\bin\Debug\TCPAsync.pdb
+C:\GIT\TCPAsync\obj\Debug\ResolveAssemblyReference.cache
+C:\GIT\TCPAsync\obj\Debug\TCPAsync.Client.resources
+C:\GIT\TCPAsync\obj\Debug\TCPAsync.Server.resources
+C:\GIT\TCPAsync\obj\Debug\TCPAsync.Properties.Resources.resources
+C:\GIT\TCPAsync\obj\Debug\TCPAsync.csproj.GenerateResource.Cache
+C:\GIT\TCPAsync\obj\Debug\TCPAsync.exe
+C:\GIT\TCPAsync\obj\Debug\TCPAsync.pdb
