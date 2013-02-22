@@ -7,3 +7,12 @@ C:\Users\dave\Desktop\TCPAsync\TCPAsync\obj\Debug\TCPAsync.Properties.Resources.
 C:\Users\dave\Desktop\TCPAsync\TCPAsync\obj\Debug\TCPAsync.csproj.GenerateResource.Cache
 C:\Users\dave\Desktop\TCPAsync\TCPAsync\obj\Debug\TCPAsync.exe
 C:\Users\dave\Desktop\TCPAsync\TCPAsync\obj\Debug\TCPAsync.pdb
+C:\Users\dmanley\Documents\GitHub\TCPAsync\bin\Debug\TCPAsync.exe
+C:\Users\dmanley\Documents\GitHub\TCPAsync\bin\Debug\TCPAsync.pdb
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.Client.resources
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.Server.resources
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.Properties.Resources.resources
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.csproj.GenerateResource.Cache
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.exe
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.pdb
