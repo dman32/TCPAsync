@@ -13,6 +13,7 @@ namespace TCPAsync
         private static System.Timers.Timer tmrHeartbeat, tmrHeartbeatBlip, tmrData, tmrDataBlip;
         public static Socket heartbeatClient, dataClient;
         public static byte[] heartbeatBytes = new byte[] { (byte)'h', (byte)'a', (byte)'r', (byte)'t', (byte)'b', (byte)'e', (byte)'a', (byte)'t' }, dataBytes= new byte[]{(byte)'h',(byte)'i'};
+
         public static void init(Client pclient)
         {
             try
@@ -20,20 +21,20 @@ namespace TCPAsync
                 client = pclient;
 
                 tmrHeartbeat = new System.Timers.Timer();
-                tmrHeartbeat.Interval = 200;
+                tmrHeartbeat.Interval = int.Parse(Configuration.get("clientheartbeatdelay"));
                 tmrHeartbeat.Elapsed += new System.Timers.ElapsedEventHandler(tmrHeartbeat_Elapsed);
 
                 tmrHeartbeatBlip = new System.Timers.Timer();
-                tmrHeartbeatBlip.Interval = 25;
+                tmrHeartbeatBlip.Interval = int.Parse(Configuration.get("clientheartbeatdelay"))/2;
                 tmrHeartbeatBlip.AutoReset = false;
                 tmrHeartbeatBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrHeatbeatBlip_Elapsed);
 
                 tmrData = new System.Timers.Timer();
-                tmrData.Interval = 100;
+                tmrData.Interval = int.Parse(Configuration.get("clientdatadelay"));
                 tmrData.Elapsed += new System.Timers.ElapsedEventHandler(tmrData_Elapsed);
 
                 tmrDataBlip = new System.Timers.Timer();
-                tmrDataBlip.Interval = 25;
+                tmrDataBlip.Interval = int.Parse(Configuration.get("clientdatadelay"))/2;
                 tmrDataBlip.AutoReset = false;
                 tmrDataBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrDataBlip_Elapsed);
             }
@@ -63,8 +64,7 @@ namespace TCPAsync
         {
             try
             {
-                heartbeatClient.Shutdown(SocketShutdown.Both);
-                heartbeatClient.Disconnect(true);
+                heartbeatClient.Close();
             }
             catch
             {
@@ -72,8 +72,7 @@ namespace TCPAsync
             }
             try
             {
-                dataClient.Shutdown(SocketShutdown.Both);
-                dataClient.Disconnect(true);
+                dataClient.Close();
             }
             catch
             {

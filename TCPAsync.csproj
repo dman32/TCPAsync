@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{41DAF5DB-37AC-495C-B715-9A54A8F25D4D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -49,25 +49,46 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client.cs">
+    <Compile Include="Client\Client.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Client.Designer.cs">
+    <Compile Include="Client\Client.Designer.cs">
       <DependentUpon>Client.cs</DependentUpon>
     </Compile>
-    <Compile Include="Server.cs">
+    <Compile Include="Client\ClientSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Server.Designer.cs">
+    <Compile Include="Client\ClientSettings.Designer.cs">
+      <DependentUpon>ClientSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration.cs" />
+    <Compile Include="ErrorMsg.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Server\ServerSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Server\ServerSettings.Designer.cs">
+      <DependentUpon>ServerSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Server\Server.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Server\Server.Designer.cs">
       <DependentUpon>Server.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Client.resx">
+    <EmbeddedResource Include="Client\Client.resx">
       <DependentUpon>Client.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Server.resx">
+    <EmbeddedResource Include="Client\ClientSettings.resx">
+      <DependentUpon>ClientSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Server\ServerSettings.resx">
+      <DependentUpon>ServerSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Server\Server.resx">
       <DependentUpon>Server.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -84,14 +105,16 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="TCPAsync.cfg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="TCPClient.cs" />
-    <None Include="tcpexample.cs" />
-    <Compile Include="TCPServer.cs" />
+    <Compile Include="Client\TCPClient.cs" />
+    <Compile Include="Server\TCPServer.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

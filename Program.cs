@@ -15,6 +15,7 @@ namespace TCPAsync
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Configuration.init();
             Application.Run(new Server());
         }
     }

@@ -16,3 +16,6 @@ C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.Properties.Resourc
 C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.csproj.GenerateResource.Cache
 C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.exe
 C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.pdb
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.ClientSettings.resources
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Debug\TCPAsync.ServerSettings.resources
+C:\Users\dmanley\Documents\GitHub\TCPAsync\bin\Debug\TCPAsync.cfg

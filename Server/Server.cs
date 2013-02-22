@@ -21,7 +21,14 @@ namespace TCPAsync
                     control.Invoke(new MethodInvoker(delegate
                     {
                         if (concatenate)
+                        {
                             control.Text += value;
+                            try
+                            {
+                                ((TextBox)control).ScrollToCaret();
+                            }
+                            catch { }
+                        }
                         else
                             control.Text = value;
                     }));
@@ -52,11 +59,13 @@ namespace TCPAsync
             InitializeComponent();
             try
             {
-                TCPServer.init(this, "10.0.64.211", 2055, 2056);
+                TCPServer.init(this, int.Parse(Configuration.get("heartbeatport")), int.Parse(Configuration.get("dataport")));
                 update = new System.Timers.Timer();
-                update.Interval = 100;
+                update.Interval = int.Parse(Configuration.get("serverupdatedelay"));
                 update.Elapsed += new System.Timers.ElapsedEventHandler(update_Elapsed);
                 update.Start();
+                Client c = new Client();
+                c.Show();
             }
             catch { }
 
@@ -93,8 +102,12 @@ namespace TCPAsync
                             updatePanelDelegate(pnlHeartbeat, Color.Red);
                             if (!TCPServer.heartbeatListening)
                                 TCPServer.heartbeatListen();
-                        }else
-                            updatePanelDelegate(pnlHeartbeat, Color.Green);
+                        }
+                        else
+                        {
+                            if (pnlHeartbeat.BackColor != Color.Green && pnlHeartbeat.BackColor != Color.GreenYellow)
+                                updatePanelDelegate(pnlHeartbeat, Color.Green);
+                        }
                 }
                 catch { updatePanelDelegate(pnlHeartbeat, Color.Gray); }
             if (TCPServer.dataListening)
@@ -110,9 +123,16 @@ namespace TCPAsync
                                 TCPServer.dataListen();
                         }
                         else
-                            updatePanelDelegate(pnlData, Color.Green);
+                            if (pnlData.BackColor != Color.Green && pnlData.BackColor != Color.GreenYellow)
+                                updatePanelDelegate(pnlData, Color.Green);
                 }
                 catch { updatePanelDelegate(pnlData, Color.Gray); }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ServerSettings ss = new ServerSettings();
+            ss.Show();
         }
     }
 }

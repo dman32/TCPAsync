@@ -13,6 +13,7 @@ namespace TCPAsync
     {
         System.Timers.Timer tmrUpdate = new System.Timers.Timer();
         public int updateCnt = 0, heartbeatCnt = 0, dataCnt = 0;
+
         public void updateLabelDelegate(Control control, String value, Boolean concatenate)
         {
             try{
@@ -31,6 +32,7 @@ namespace TCPAsync
                         control.Text = value;
             }catch{}
         }
+
         public void updatePanelDelegate(Control control, Color value)
         {
             try
@@ -45,6 +47,7 @@ namespace TCPAsync
             }
             catch { }
         }
+
         public Client()
         {
 
@@ -52,7 +55,7 @@ namespace TCPAsync
             try
             {
                 TCPClient.init(this);
-                tmrUpdate.Interval = 100;
+                tmrUpdate.Interval = int.Parse(Configuration.get("clientupdatedelay"));
                 tmrUpdate.Elapsed += new System.Timers.ElapsedEventHandler(update_Elapsed);
                 tmrUpdate.Start();
             }
@@ -67,6 +70,10 @@ namespace TCPAsync
                 updateLabelDelegate(lblUpdate, updateCnt.ToString(), false);
                 updateLabelDelegate(lblDataCnt, dataCnt.ToString(), false);
                 updateLabelDelegate(lblHeartbeatCnt, heartbeatCnt.ToString(), false);
+                if (TCPClient.heartbeatClient.Connected && TCPClient.dataClient.Connected)
+                    btnConnect.Text = "Disconnect";
+                else
+                    btnConnect.Text = "Connect";
             }
             catch { }
             try
@@ -81,18 +88,19 @@ namespace TCPAsync
             catch { updateLabelDelegate(lblDataBufferSize, "n/a", false); }
             try
             {
-                if (TCPClient.heartbeatClient.Connected)
-                    updatePanelDelegate(pnlHeartbeat, Color.Green);
-                else
+                if (!TCPClient.heartbeatClient.Connected)
                     updatePanelDelegate(pnlHeartbeat, Color.Red);
+                else if (pnlHeartbeat.BackColor != Color.Green && pnlHeartbeat.BackColor != Color.GreenYellow)
+                    updatePanelDelegate(pnlHeartbeat, Color.Green); ;
             }
             catch { updatePanelDelegate(pnlHeartbeat, Color.Gray); }
             try
             {
-                if (TCPClient.dataClient.Connected)
-                    updatePanelDelegate(pnlData, Color.Green);
-                else
+                if (!TCPClient.dataClient.Connected)
                     updatePanelDelegate(pnlData, Color.Red);
+                else if (pnlData.BackColor != Color.Green && pnlData.BackColor != Color.GreenYellow)
+                    updatePanelDelegate(pnlData, Color.Green);
+
             }
             catch { updatePanelDelegate(pnlData, Color.Gray); }
         }
@@ -102,9 +110,9 @@ namespace TCPAsync
             try
             {
                 if (TCPClient.heartbeatClient == null && TCPClient.dataClient == null)
-                    TCPClient.connect("10.0.64.211", 2055, 2056);
+                    TCPClient.connect(Configuration.get("serveripaddress"), int.Parse(Configuration.get("heartbeatport")), int.Parse(Configuration.get("dataport")));
                 else if (!TCPClient.heartbeatClient.Connected && !TCPClient.dataClient.Connected)
-                    TCPClient.connect("10.0.64.211", 2055, 2056);
+                    TCPClient.connect(Configuration.get("serveripaddress"), int.Parse(Configuration.get("heartbeatport")), int.Parse(Configuration.get("dataport")));
                 else
                     TCPClient.disconnect();
             }
@@ -114,6 +122,12 @@ namespace TCPAsync
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
             TCPClient.disconnect();
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            ClientSettings cs = new ClientSettings();
+            cs.Show();
         }
     }
 }
