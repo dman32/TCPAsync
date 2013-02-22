@@ -46,6 +46,8 @@ namespace TCPAsync
 
                 heartbeatListen();
                 dataListen();
+                Client c = new Client();
+                c.Show();
             }
             catch { }
         }
@@ -65,7 +67,7 @@ namespace TCPAsync
             }
             catch (Exception ex)
             {
-                server.textBox1.Text += ex.Message + Environment.NewLine;
+                server.updateLabelDelegate(server.textBox1, ex.Message + Environment.NewLine, true);
             }
         }
         private static void heartbeatAccept(IAsyncResult ar)
@@ -79,7 +81,7 @@ namespace TCPAsync
             }
             catch (Exception ex)
             {
-                server.textBox1.Text += ex.Message + Environment.NewLine;
+                server.updateLabelDelegate(server.textBox1, ex.Message + Environment.NewLine, true);
             }
         }
         private static void heartbeatReceived(IAsyncResult ar)
@@ -91,8 +93,7 @@ namespace TCPAsync
                 {
                     server.heartbeatCnt++;
                     heartbeatClient.BeginReceive(heartbeatBytes, 0, heartbeatBytes.Length, SocketFlags.None, new AsyncCallback(heartbeatReceived), heartbeatClient);
-                    //server.textBox1.Text += System.Text.Encoding.UTF8.GetString(heartbeatBytes);
-                    server.pnlHeartbeat.BackColor = System.Drawing.Color.GreenYellow;
+                    server.updatePanelDelegate(server.pnlHeartbeat, System.Drawing.Color.GreenYellow);
                     tmrHeartbeatBlip.Start();
                 }
                 else
@@ -103,12 +104,12 @@ namespace TCPAsync
             }
             catch(Exception ex)
             {
-                server.textBox1.Text += ex.Message + Environment.NewLine;
+                server.updateLabelDelegate(server.textBox1, ex.Message + Environment.NewLine, true);
             }
         }
         static void tmrHeatbeatBlip_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            server.pnlHeartbeat.BackColor = System.Drawing.Color.Green;
+            server.updatePanelDelegate(server.pnlHeartbeat, System.Drawing.Color.Green);
         }
 
         public static void dataListen()
@@ -124,7 +125,7 @@ namespace TCPAsync
             }
             catch (Exception ex)
             {
-                server.textBox1.Text += ex.Message + Environment.NewLine;
+                server.updateLabelDelegate(server.textBox1, ex.Message + Environment.NewLine, true);
             }
         }
         private static void dataAccept(IAsyncResult ar)
@@ -138,7 +139,7 @@ namespace TCPAsync
             }
             catch (Exception ex)
             {
-                server.textBox1.Text += ex.Message + Environment.NewLine;
+                server.updateLabelDelegate(server.textBox1, ex.Message + Environment.NewLine, true);
             }
         }
         private static void dataReceived(IAsyncResult ar)
@@ -149,7 +150,7 @@ namespace TCPAsync
                 int rec = dataClient.EndReceive(ar);
                 if (rec > 0)
                 {
-                    server.pnlData.BackColor = System.Drawing.Color.GreenYellow;
+                    server.updatePanelDelegate(server.pnlData, System.Drawing.Color.GreenYellow);
                     tmrDataBlip.Start();
                     server.dataCnt++;
                     String str = Utilities.GetStringFromBytes(dataBytes).Substring(0, rec);
@@ -165,25 +166,29 @@ namespace TCPAsync
             }
             catch (Exception ex)
             {
-                server.textBox1.Text += ex.StackTrace + Environment.NewLine;
+                server.updateLabelDelegate(server.textBox1, ex.StackTrace + Environment.NewLine, true);
             }
         }
         private static void parse()
         {
-            int start = msg.IndexOf(startInd);
-            if (start >= 0)
+            try
             {
-                int end = msg.IndexOf(endInd, start);
-                if (end >= 0)
+                int start = msg.IndexOf(startInd);
+                if (start >= 0)
                 {
-                    server.textBox1.Text += msg.Substring(start + startInd.Length, end - start - startInd.Length).Length.ToString();
-                    msg = msg.Remove(0, end + endInd.Length);
+                    int end = msg.IndexOf(endInd, start);
+                    if (end >= 0)
+                    {
+                        server.updateLabelDelegate(server.textBox1, msg.Substring(start + startInd.Length, end - start - startInd.Length).Length.ToString(), true);
+                        msg = msg.Remove(0, end + endInd.Length);
+                    }
                 }
             }
+            catch { }
         }
         static void tmrDataBlip_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            server.pnlData.BackColor = System.Drawing.Color.Green;
+            server.updatePanelDelegate(server.pnlData, System.Drawing.Color.Green);
         }
     }
 }

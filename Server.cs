@@ -13,69 +13,106 @@ namespace TCPAsync
     {
         System.Timers.Timer update;
         public int updateCnt = 0, heartbeatCnt = 0, dataCnt = 0;
+        public void updateLabelDelegate(Control control, String value, Boolean concatenate)
+        {
+            try
+            {
+                if (control.InvokeRequired)
+                    control.Invoke(new MethodInvoker(delegate
+                    {
+                        if (concatenate)
+                            control.Text += value;
+                        else
+                            control.Text = value;
+                    }));
+                else
+                    if (concatenate)
+                        control.Text += value;
+                    else
+                        control.Text = value;
+            }
+            catch { }
+        }
+        public void updatePanelDelegate(Control control, Color value)
+        {
+            try
+            {
+                if (control.InvokeRequired)
+                    control.Invoke(new MethodInvoker(delegate
+                    {
+                        control.BackColor = value;
+                    }));
+                else
+                    control.BackColor = value;
+            }
+            catch { }
+        }
         public Server()
         {
             InitializeComponent();
-            TCPServer.init(this, "195.0.0.187", 2055, 2056);
-            update = new System.Timers.Timer();
-            update.Interval = 100;
-            update.Elapsed += new System.Timers.ElapsedEventHandler(update_Elapsed);
-            update.Start();
+            try
+            {
+                TCPServer.init(this, "10.0.64.211", 2055, 2056);
+                update = new System.Timers.Timer();
+                update.Interval = 100;
+                update.Elapsed += new System.Timers.ElapsedEventHandler(update_Elapsed);
+                update.Start();
+            }
+            catch { }
+
         }
 
         void update_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            updateCnt++;
-            lblUpdate.Text = updateCnt.ToString();
-            lblDataCnt.Text = dataCnt.ToString();
-            lblHeartbeatCnt.Text = heartbeatCnt.ToString();
             try
             {
-                lblHeartbeatBufferSize.Text = TCPServer.heartbeatClient.ReceiveBufferSize.ToString();
+                updateCnt++;
+                updateLabelDelegate(lblUpdate, updateCnt.ToString(), false);
+                updateLabelDelegate(lblDataCnt, dataCnt.ToString(), false);
+                updateLabelDelegate(lblHeartbeatCnt, heartbeatCnt.ToString(), false);
             }
-            catch { lblHeartbeatBufferSize.Text = "n/a"; }
+            catch { }
             try
             {
-                lblDataBufferSize.Text = TCPServer.dataClient.ReceiveBufferSize.ToString();
+                updateLabelDelegate(lblHeartbeatBufferSize, TCPServer.heartbeatClient.ReceiveBufferSize.ToString(), false);
             }
-            catch { lblDataBufferSize.Text = "n/a"; }
+            catch { updateLabelDelegate(lblHeartbeatBufferSize, "n/a", false); }
+            try
+            {
+                updateLabelDelegate(lblDataBufferSize, TCPServer.dataClient.ReceiveBufferSize.ToString(), false);
+            }
+            catch { updateLabelDelegate(lblDataBufferSize, "n/a", false); }
             if (TCPServer.heartbeatListening)
-                pnlHeartbeat.BackColor = Color.Blue;
+                updatePanelDelegate(pnlHeartbeat, Color.Blue);
             else
                 try
                 {
                     if (TCPServer.heartbeatClient != null)
                         if (!TCPServer.heartbeatClient.Connected)
                         {
-                            pnlHeartbeat.BackColor = Color.Red;
+                            updatePanelDelegate(pnlHeartbeat, Color.Red);
                             if (!TCPServer.heartbeatListening)
                                 TCPServer.heartbeatListen();
                         }else
-                            pnlHeartbeat.BackColor = Color.Green;
+                            updatePanelDelegate(pnlHeartbeat, Color.Green);
                 }
-                catch { pnlHeartbeat.BackColor = Color.Gray; }
+                catch { updatePanelDelegate(pnlHeartbeat, Color.Gray); }
             if (TCPServer.dataListening)
-                pnlData.BackColor = Color.Blue;
+                updatePanelDelegate(pnlData, Color.Blue);
             else
                 try
                 {
                     if (TCPServer.dataClient != null)
                         if (!TCPServer.dataClient.Connected)
                         {
-                            pnlData.BackColor = Color.Red;
+                            updatePanelDelegate(pnlData, Color.Red);
                             if (!TCPServer.dataListening)
                                 TCPServer.dataListen();
                         }
                         else
-                            pnlData.BackColor = Color.Green;
+                            updatePanelDelegate(pnlData, Color.Green);
                 }
-                catch { pnlData.BackColor = Color.Gray; }
-        }
-
-        private void btnClient_Click(object sender, EventArgs e)
-        {
-            Client c = new Client();
-            c.Show();
+                catch { updatePanelDelegate(pnlData, Color.Gray); }
         }
     }
 }

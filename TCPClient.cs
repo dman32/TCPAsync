@@ -15,26 +15,29 @@ namespace TCPAsync
         public static byte[] heartbeatBytes = new byte[] { (byte)'h', (byte)'a', (byte)'r', (byte)'t', (byte)'b', (byte)'e', (byte)'a', (byte)'t' }, dataBytes= new byte[]{(byte)'h',(byte)'i'};
         public static void init(Client pclient)
         {
-            client = pclient;
+            try
+            {
+                client = pclient;
 
-            tmrHeartbeat = new System.Timers.Timer();
-            tmrHeartbeat.Interval = 200;
-            tmrHeartbeat.Elapsed += new System.Timers.ElapsedEventHandler(tmrHeartbeat_Elapsed);
+                tmrHeartbeat = new System.Timers.Timer();
+                tmrHeartbeat.Interval = 200;
+                tmrHeartbeat.Elapsed += new System.Timers.ElapsedEventHandler(tmrHeartbeat_Elapsed);
 
-            tmrHeartbeatBlip = new System.Timers.Timer();
-            tmrHeartbeatBlip.Interval = 25;
-            tmrHeartbeatBlip.AutoReset = false;
-            tmrHeartbeatBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrHeatbeatBlip_Elapsed);
+                tmrHeartbeatBlip = new System.Timers.Timer();
+                tmrHeartbeatBlip.Interval = 25;
+                tmrHeartbeatBlip.AutoReset = false;
+                tmrHeartbeatBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrHeatbeatBlip_Elapsed);
 
-            tmrData = new System.Timers.Timer();
-            tmrData.Interval = 100;
-            tmrData.Elapsed += new System.Timers.ElapsedEventHandler(tmrData_Elapsed);
+                tmrData = new System.Timers.Timer();
+                tmrData.Interval = 100;
+                tmrData.Elapsed += new System.Timers.ElapsedEventHandler(tmrData_Elapsed);
 
-            tmrDataBlip = new System.Timers.Timer();
-            tmrDataBlip.Interval = 25;
-            tmrDataBlip.AutoReset = false;
-            tmrDataBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrDataBlip_Elapsed);
-
+                tmrDataBlip = new System.Timers.Timer();
+                tmrDataBlip.Interval = 25;
+                tmrDataBlip.AutoReset = false;
+                tmrDataBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrDataBlip_Elapsed);
+            }
+            catch { }
         }
         public static void connect(String ipAddress, int heartbeatPort, int dataPort)
         {
@@ -62,6 +65,13 @@ namespace TCPAsync
             {
                 heartbeatClient.Shutdown(SocketShutdown.Both);
                 heartbeatClient.Disconnect(true);
+            }
+            catch
+            {
+
+            }
+            try
+            {
                 dataClient.Shutdown(SocketShutdown.Both);
                 dataClient.Disconnect(true);
             }
@@ -69,6 +79,7 @@ namespace TCPAsync
             {
 
             }
+
         }
         static void tmrData_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
@@ -92,7 +103,7 @@ namespace TCPAsync
         {
             try
             {
-                client.pnlData.BackColor = System.Drawing.Color.GreenYellow;
+                client.updatePanelDelegate(client.pnlData, System.Drawing.Color.GreenYellow);
                 tmrDataBlip.Start();
                 dataClient.EndSend(ar);
                 client.dataCnt++;
@@ -103,7 +114,7 @@ namespace TCPAsync
         {
             try
             {
-                client.pnlData.BackColor = System.Drawing.Color.Green;
+                client.updatePanelDelegate(client.pnlData, System.Drawing.Color.Green);
             }
             catch { }
         }
@@ -111,7 +122,7 @@ namespace TCPAsync
         static void tmrHeatbeatBlip_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             try{
-                client.pnlHeartbeat.BackColor = System.Drawing.Color.Green;
+                client.updatePanelDelegate(client.pnlHeartbeat, System.Drawing.Color.Green);
             }
             catch { }
         }
@@ -136,13 +147,12 @@ namespace TCPAsync
         {
             try
             {
-                client.pnlHeartbeat.BackColor = System.Drawing.Color.GreenYellow;
+                client.updatePanelDelegate(client.pnlHeartbeat, System.Drawing.Color.GreenYellow);
                 tmrHeartbeatBlip.Start();
                 heartbeatClient.EndSend(ar);
                 client.heartbeatCnt++;
             }
             catch { }
         }
-        
     }
 }

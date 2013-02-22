@@ -33,7 +33,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.pnlHeartbeat = new System.Windows.Forms.Panel();
             this.pnlData = new System.Windows.Forms.Panel();
-            this.btnClient = new System.Windows.Forms.Button();
             this.lblHeartbeatCnt = new System.Windows.Forms.Label();
             this.lblDataCnt = new System.Windows.Forms.Label();
             this.lblHeartbeatBufferSize = new System.Windows.Forms.Label();
@@ -81,16 +80,6 @@
             this.pnlData.Size = new System.Drawing.Size(20, 20);
             this.pnlData.TabIndex = 2;
             // 
-            // btnClient
-            // 
-            this.btnClient.Location = new System.Drawing.Point(205, 12);
-            this.btnClient.Name = "btnClient";
-            this.btnClient.Size = new System.Drawing.Size(75, 23);
-            this.btnClient.TabIndex = 9;
-            this.btnClient.Text = "Client";
-            this.btnClient.UseVisualStyleBackColor = true;
-            this.btnClient.Click += new System.EventHandler(this.btnClient_Click);
-            // 
             // lblHeartbeatCnt
             // 
             this.lblHeartbeatCnt.AutoSize = true;
@@ -132,7 +121,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(292, 273);
-            this.Controls.Add(this.btnClient);
             this.Controls.Add(this.pnlData);
             this.Controls.Add(this.pnlHeartbeat);
             this.Controls.Add(this.textBox1);
@@ -156,7 +144,6 @@
         private System.Windows.Forms.Label label3;
         public System.Windows.Forms.Panel pnlHeartbeat;
         public System.Windows.Forms.Panel pnlData;
-        private System.Windows.Forms.Button btnClient;
         private System.Windows.Forms.Label lblHeartbeatCnt;
         private System.Windows.Forms.Label lblDataCnt;
         private System.Windows.Forms.Label lblHeartbeatBufferSize;
