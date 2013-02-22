@@ -16,7 +16,7 @@ namespace TCPAsync
         public Server()
         {
             InitializeComponent();
-            TCPServer.init(this);
+            TCPServer.init(this, "195.0.0.187", 2055, 2056);
             update = new System.Timers.Timer();
             update.Interval = 100;
             update.Elapsed += new System.Timers.ElapsedEventHandler(update_Elapsed);
@@ -29,7 +29,16 @@ namespace TCPAsync
             lblUpdate.Text = updateCnt.ToString();
             lblDataCnt.Text = dataCnt.ToString();
             lblHeartbeatCnt.Text = heartbeatCnt.ToString();
-
+            try
+            {
+                lblHeartbeatBufferSize.Text = TCPServer.heartbeatClient.ReceiveBufferSize.ToString();
+            }
+            catch { lblHeartbeatBufferSize.Text = "n/a"; }
+            try
+            {
+                lblDataBufferSize.Text = TCPServer.dataClient.ReceiveBufferSize.ToString();
+            }
+            catch { lblDataBufferSize.Text = "n/a"; }
             if (TCPServer.heartbeatListening)
                 pnlHeartbeat.BackColor = Color.Blue;
             else

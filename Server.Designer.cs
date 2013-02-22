@@ -36,6 +36,8 @@
             this.btnClient = new System.Windows.Forms.Button();
             this.lblHeartbeatCnt = new System.Windows.Forms.Label();
             this.lblDataCnt = new System.Windows.Forms.Label();
+            this.lblHeartbeatBufferSize = new System.Windows.Forms.Label();
+            this.lblDataBufferSize = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblUpdate
@@ -107,6 +109,24 @@
             this.lblDataCnt.TabIndex = 0;
             this.lblDataCnt.Text = "label1";
             // 
+            // lblHeartbeatBufferSize
+            // 
+            this.lblHeartbeatBufferSize.AutoSize = true;
+            this.lblHeartbeatBufferSize.Location = new System.Drawing.Point(79, 29);
+            this.lblHeartbeatBufferSize.Name = "lblHeartbeatBufferSize";
+            this.lblHeartbeatBufferSize.Size = new System.Drawing.Size(35, 13);
+            this.lblHeartbeatBufferSize.TabIndex = 0;
+            this.lblHeartbeatBufferSize.Text = "label1";
+            // 
+            // lblDataBufferSize
+            // 
+            this.lblDataBufferSize.AutoSize = true;
+            this.lblDataBufferSize.Location = new System.Drawing.Point(79, 55);
+            this.lblDataBufferSize.Name = "lblDataBufferSize";
+            this.lblDataBufferSize.Size = new System.Drawing.Size(35, 13);
+            this.lblDataBufferSize.TabIndex = 0;
+            this.lblDataBufferSize.Text = "label1";
+            // 
             // Server
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -118,6 +138,8 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lblDataCnt);
+            this.Controls.Add(this.lblDataBufferSize);
+            this.Controls.Add(this.lblHeartbeatBufferSize);
             this.Controls.Add(this.lblHeartbeatCnt);
             this.Controls.Add(this.lblUpdate);
             this.Name = "Server";
@@ -137,6 +159,8 @@
         private System.Windows.Forms.Button btnClient;
         private System.Windows.Forms.Label lblHeartbeatCnt;
         private System.Windows.Forms.Label lblDataCnt;
+        private System.Windows.Forms.Label lblHeartbeatBufferSize;
+        private System.Windows.Forms.Label lblDataBufferSize;
 
     }
 }

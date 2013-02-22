@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace TCPAsync
 {
@@ -21,7 +22,7 @@ namespace TCPAsync
             tmrHeartbeat.Elapsed += new System.Timers.ElapsedEventHandler(tmrHeartbeat_Elapsed);
 
             tmrHeartbeatBlip = new System.Timers.Timer();
-            tmrHeartbeatBlip.Interval = 250;
+            tmrHeartbeatBlip.Interval = 25;
             tmrHeartbeatBlip.AutoReset = false;
             tmrHeartbeatBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrHeatbeatBlip_Elapsed);
 
@@ -30,11 +31,12 @@ namespace TCPAsync
             tmrData.Elapsed += new System.Timers.ElapsedEventHandler(tmrData_Elapsed);
 
             tmrDataBlip = new System.Timers.Timer();
-            tmrDataBlip.Interval = 250;
+            tmrDataBlip.Interval = 25;
             tmrDataBlip.AutoReset = false;
             tmrDataBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrDataBlip_Elapsed);
+
         }
-        public static void connect()
+        public static void connect(String ipAddress, int heartbeatPort, int dataPort)
         {
             try
             {
@@ -42,13 +44,15 @@ namespace TCPAsync
                 heartbeatClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 heartbeatClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
                 heartbeatClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                heartbeatClient.BeginConnect(new IPEndPoint(IPAddress.Parse("10.0.64.211"), 2055), new AsyncCallback(heartbeatConnect), heartbeatClient);
+                heartbeatClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+                heartbeatClient.BeginConnect(new IPEndPoint(IPAddress.Parse(ipAddress), heartbeatPort), new AsyncCallback(heartbeatConnect), heartbeatClient);
 
                 dataClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 dataClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 dataClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
                 dataClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                dataClient.BeginConnect(new IPEndPoint(IPAddress.Parse("10.0.64.211"), 2056), new AsyncCallback(dataConnect), dataClient);
+                dataClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+                dataClient.BeginConnect(new IPEndPoint(IPAddress.Parse(ipAddress), dataPort), new AsyncCallback(dataConnect), dataClient);
             }
             catch { }
         }
@@ -66,12 +70,12 @@ namespace TCPAsync
 
             }
         }
-
         static void tmrData_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             try
             {
-                dataClient.BeginSend(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(dataSend), null);
+                String str = "##START##1234##END##";
+                dataClient.BeginSend(Utilities.GetBytesFromString(str), 0, str.Length, SocketFlags.None, new AsyncCallback(dataSend), null);
             }
             catch { }
         }
@@ -113,7 +117,8 @@ namespace TCPAsync
         }
         static void tmrHeartbeat_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            try{
+            try
+            {
                 heartbeatClient.BeginSend(heartbeatBytes, 0, heartbeatBytes.Length, SocketFlags.None, new AsyncCallback(heartbeatSend), null);
             }
             catch { }

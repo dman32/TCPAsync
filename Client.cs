@@ -30,6 +30,16 @@ namespace TCPAsync
             lblHeartbeatCnt.Text = heartbeatCnt.ToString();
             try
             {
+                lblHeartbeatBufferSize.Text = TCPServer.heartbeatClient.ReceiveBufferSize.ToString();
+            }
+            catch { lblHeartbeatBufferSize.Text = "n/a"; }
+            try
+            {
+                lblDataBufferSize.Text = TCPServer.dataClient.ReceiveBufferSize.ToString();
+            }
+            catch { lblDataBufferSize.Text = "n/a"; }
+            try
+            {
                 if (TCPClient.heartbeatClient.Connected)
                     pnlHeartbeat.BackColor = Color.Green;
                 else
@@ -49,11 +59,11 @@ namespace TCPAsync
         private void btnConnect_Click(object sender, EventArgs e)
         {
             if (TCPClient.heartbeatClient == null)
-                TCPClient.connect();
+                TCPClient.connect("195.0.0.187", 2055, 2056);
             else if (!TCPClient.heartbeatClient.Connected)
-                    TCPClient.connect();
-                else
-                    TCPClient.disconnect();
+                TCPClient.connect("195.0.0.187", 2055, 2056);
+            else
+                TCPClient.disconnect();
         }
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)

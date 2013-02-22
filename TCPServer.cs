@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Collections;
 
 namespace TCPAsync
 {
@@ -11,33 +12,42 @@ namespace TCPAsync
         private static Server server;
         public static Socket heartbeatServer, heartbeatClient, dataServer, dataClient;
         public static Boolean heartbeatListening = false, dataListening = false;
-        private static byte[] heartbeatBytes = new byte[1024], dataBytes = new byte[1024];
+        private static byte[] heartbeatBytes, dataBytes;
+        
+        private static String msg = String.Empty, startInd = "##START##", endInd = "##END##";
+
         private static System.Timers.Timer tmrHeartbeatBlip, tmrDataBlip;
-        public static void init(Server pserver)
+        public static void init(Server pserver, String ipAddress, int heartbeatPort, int dataPort)
         {
-            server = pserver;
-            heartbeatServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            heartbeatServer.Bind(new IPEndPoint(IPAddress.Parse("10.0.64.211"), 2055));
-            heartbeatServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-            heartbeatServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            try
+            {
+                server = pserver;
+                heartbeatServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                heartbeatServer.Bind(new IPEndPoint(IPAddress.Parse(ipAddress), heartbeatPort));
+                heartbeatServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                heartbeatServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                heartbeatServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
 
-            tmrHeartbeatBlip = new System.Timers.Timer();
-            tmrHeartbeatBlip.Interval = 250;
-            tmrHeartbeatBlip.AutoReset = false;
-            tmrHeartbeatBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrHeatbeatBlip_Elapsed);
-            
-            dataServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            dataServer.Bind(new IPEndPoint(IPAddress.Parse("10.0.64.211"), 2056));
-            dataServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-            dataServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                tmrHeartbeatBlip = new System.Timers.Timer();
+                tmrHeartbeatBlip.Interval = 25;
+                tmrHeartbeatBlip.AutoReset = false;
+                tmrHeartbeatBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrHeatbeatBlip_Elapsed);
 
-            tmrDataBlip = new System.Timers.Timer();
-            tmrDataBlip.Interval = 250;
-            tmrDataBlip.AutoReset = false;
-            tmrDataBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrDataBlip_Elapsed);
+                dataServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                dataServer.Bind(new IPEndPoint(IPAddress.Parse(ipAddress), dataPort));
+                dataServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                dataServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                dataServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
 
-            heartbeatListen();
-            dataListen();
+                tmrDataBlip = new System.Timers.Timer();
+                tmrDataBlip.Interval = 25;
+                tmrDataBlip.AutoReset = false;
+                tmrDataBlip.Elapsed += new System.Timers.ElapsedEventHandler(tmrDataBlip_Elapsed);
+
+                heartbeatListen();
+                dataListen();
+            }
+            catch { }
         }
 
 
@@ -64,14 +74,15 @@ namespace TCPAsync
             {
                 heartbeatListening = false;
                 heartbeatClient = ((Socket)ar.AsyncState).EndAccept(ar);
-                heartbeatClient.BeginReceive(heartbeatBytes, 0, heartbeatBytes.Length, SocketFlags.None, new AsyncCallback(heartbeatReceive), heartbeatClient);
+                heartbeatBytes = new byte[heartbeatClient.ReceiveBufferSize];
+                heartbeatClient.BeginReceive(heartbeatBytes, 0, heartbeatBytes.Length, SocketFlags.None, new AsyncCallback(heartbeatReceived), heartbeatClient);
             }
             catch (Exception ex)
             {
                 server.textBox1.Text += ex.Message + Environment.NewLine;
             }
         }
-        private static void heartbeatReceive(IAsyncResult ar)
+        private static void heartbeatReceived(IAsyncResult ar)
         {
             try
             {
@@ -79,7 +90,7 @@ namespace TCPAsync
                 if (heartbeatClient.EndReceive(ar) > 0)
                 {
                     server.heartbeatCnt++;
-                    heartbeatClient.BeginReceive(heartbeatBytes, 0, heartbeatBytes.Length, SocketFlags.None, new AsyncCallback(heartbeatReceive), heartbeatClient);
+                    heartbeatClient.BeginReceive(heartbeatBytes, 0, heartbeatBytes.Length, SocketFlags.None, new AsyncCallback(heartbeatReceived), heartbeatClient);
                     //server.textBox1.Text += System.Text.Encoding.UTF8.GetString(heartbeatBytes);
                     server.pnlHeartbeat.BackColor = System.Drawing.Color.GreenYellow;
                     tmrHeartbeatBlip.Start();
@@ -122,24 +133,29 @@ namespace TCPAsync
             {
                 dataListening = false;
                 dataClient = ((Socket)ar.AsyncState).EndAccept(ar);
-                dataClient.BeginReceive(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(dataReceive), dataClient);
+                dataBytes = new byte[dataClient.ReceiveBufferSize];
+                dataClient.BeginReceive(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(dataReceived), dataClient);
             }
             catch (Exception ex)
             {
                 server.textBox1.Text += ex.Message + Environment.NewLine;
             }
         }
-        private static void dataReceive(IAsyncResult ar)
+        private static void dataReceived(IAsyncResult ar)
         {
             try
             {
                 dataClient = (Socket)ar.AsyncState;
-                if (dataClient.EndReceive(ar) > 0)
+                int rec = dataClient.EndReceive(ar);
+                if (rec > 0)
                 {
-                    server.dataCnt++;
-                    dataClient.BeginReceive(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(dataReceive), dataClient);
                     server.pnlData.BackColor = System.Drawing.Color.GreenYellow;
                     tmrDataBlip.Start();
+                    server.dataCnt++;
+                    String str = Utilities.GetStringFromBytes(dataBytes).Substring(0, rec);
+                    msg += str;
+                    parse();
+                    dataClient.BeginReceive(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(dataReceived), dataClient);
                 }
                 else
                 {
@@ -150,6 +166,19 @@ namespace TCPAsync
             catch (Exception ex)
             {
                 server.textBox1.Text += ex.StackTrace + Environment.NewLine;
+            }
+        }
+        private static void parse()
+        {
+            int start = msg.IndexOf(startInd);
+            if (start >= 0)
+            {
+                int end = msg.IndexOf(endInd, start);
+                if (end >= 0)
+                {
+                    server.textBox1.Text += msg.Substring(start + startInd.Length, end - start - startInd.Length).Length.ToString();
+                    msg = msg.Remove(0, end + endInd.Length);
+                }
             }
         }
         static void tmrDataBlip_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
