@@ -73,7 +73,7 @@ namespace TCPAsync
             {
                 heartbeatListening = false;
                 heartbeatClient = ((Socket)ar.AsyncState).EndAccept(ar);
-                heartbeatBytes = new byte[heartbeatClient.ReceiveBufferSize];
+                heartbeatBytes = new byte[1024];
                 heartbeatClient.BeginReceive(heartbeatBytes, 0, heartbeatBytes.Length, SocketFlags.None, new AsyncCallback(heartbeatReceived), heartbeatClient);
             }
             catch (Exception ex)
@@ -134,7 +134,7 @@ namespace TCPAsync
             {
                 dataListening = false;
                 dataClient = ((Socket)ar.AsyncState).EndAccept(ar);
-                dataBytes = new byte[dataClient.ReceiveBufferSize];
+                dataBytes = new byte[200];
                 dataClient.BeginReceive(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(dataReceived), dataClient);
             }
             catch (Exception ex)
@@ -149,15 +149,15 @@ namespace TCPAsync
             {
                 dataClient = (Socket)ar.AsyncState;
                 int rec = dataClient.EndReceive(ar);
+                dataClient.BeginReceive(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(dataReceived), dataClient);
                 if (rec > 0)
                 {
-                    server.updatePanelDelegate(server.pnlData, System.Drawing.Color.GreenYellow);
-                    tmrDataBlip.Start();
+                    //server.updatePanelDelegate(server.pnlData, System.Drawing.Color.GreenYellow);
+                    //tmrDataBlip.Start();
                     server.dataCnt++;
-                    String str = Utilities.GetStringFromBytes(dataBytes).Substring(0, rec);
-                    msg += str;
-                    parse();
-                    dataClient.BeginReceive(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(dataReceived), dataClient);
+                    //String str = Utilities.GetStringFromBytes(dataBytes).Substring(0, rec);
+                    //msg += str;
+                    //parse();
                 }
                 else
                 {
@@ -181,7 +181,7 @@ namespace TCPAsync
                     int end = msg.IndexOf(endInd, start);
                     if (end >= 0)
                     {
-                        server.updateLabelDelegate(server.textBox1, msg.Substring(start + startInd.Length, end - start - startInd.Length).Length.ToString(), true);
+                        server.updateLabelDelegate(server.textBox1, msg.Substring(start + startInd.Length, end - start - startInd.Length), true);
                         msg = msg.Remove(0, end + endInd.Length);
                     }
                 }

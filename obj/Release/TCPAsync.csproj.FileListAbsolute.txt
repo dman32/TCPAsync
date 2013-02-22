@@ -1,0 +1,12 @@
+C:\Users\dmanley\Documents\GitHub\TCPAsync\bin\Release\TCPAsync.cfg
+C:\Users\dmanley\Documents\GitHub\TCPAsync\bin\Release\TCPAsync.exe
+C:\Users\dmanley\Documents\GitHub\TCPAsync\bin\Release\TCPAsync.pdb
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Release\ResolveAssemblyReference.cache
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Release\TCPAsync.Client.resources
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Release\TCPAsync.ClientSettings.resources
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Release\TCPAsync.ServerSettings.resources
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Release\TCPAsync.Server.resources
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Release\TCPAsync.Properties.Resources.resources
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Release\TCPAsync.csproj.GenerateResource.Cache
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Release\TCPAsync.exe
+C:\Users\dmanley\Documents\GitHub\TCPAsync\obj\Release\TCPAsync.pdb

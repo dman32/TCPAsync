@@ -80,11 +80,15 @@ namespace TCPAsync
             }
 
         }
+        public static int cnt = 0;
         static void tmrData_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             try
             {
-                String str = "##START##1234##END##";
+                cnt++;
+                String str = "##START##"+cnt.ToString()+"##END##";
+                dataClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+                dataClient.NoDelay = true;
                 dataClient.BeginSend(Utilities.GetBytesFromString(str), 0, str.Length, SocketFlags.None, new AsyncCallback(dataSend), null);
             }
             catch { }
