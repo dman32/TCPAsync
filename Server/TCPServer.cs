@@ -24,9 +24,6 @@ namespace TCPAsync
                 server = pserver;
                 heartbeatServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 heartbeatServer.Bind(new IPEndPoint(IPAddress.Any, heartbeatPort));
-                heartbeatServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                heartbeatServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                heartbeatServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
 
                 tmrHeartbeatBlip = new System.Timers.Timer();
                 tmrHeartbeatBlip.Interval = int.Parse(Configuration.get("clientheartbeatdelay"))/2;
@@ -35,9 +32,6 @@ namespace TCPAsync
 
                 dataServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 dataServer.Bind(new IPEndPoint(IPAddress.Any, dataPort));
-                dataServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                dataServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                dataServer.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
 
                 tmrDataBlip = new System.Timers.Timer();
                 tmrDataBlip.Interval = int.Parse(Configuration.get("clientdatadelay")) / 2;
@@ -134,7 +128,7 @@ namespace TCPAsync
             {
                 dataListening = false;
                 dataClient = ((Socket)ar.AsyncState).EndAccept(ar);
-                dataBytes = new byte[200];
+                dataBytes = new byte[16048];
                 dataClient.BeginReceive(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(dataReceived), dataClient);
             }
             catch (Exception ex)
@@ -152,12 +146,12 @@ namespace TCPAsync
                 dataClient.BeginReceive(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(dataReceived), dataClient);
                 if (rec > 0)
                 {
-                    //server.updatePanelDelegate(server.pnlData, System.Drawing.Color.GreenYellow);
-                    //tmrDataBlip.Start();
+                    server.updatePanelDelegate(server.pnlData, System.Drawing.Color.GreenYellow);
+                    tmrDataBlip.Start();
                     server.dataCnt++;
-                    //String str = Utilities.GetStringFromBytes(dataBytes).Substring(0, rec);
-                    //msg += str;
-                    //parse();
+                    String str = Utilities.GetStringFromBytes(dataBytes).Substring(0, rec);
+                    msg += str;
+                    parse();
                 }
                 else
                 {
@@ -167,7 +161,7 @@ namespace TCPAsync
             }
             catch (Exception ex)
             {
-                server.updateLabelDelegate(server.textBox1, ex.StackTrace + Environment.NewLine, true);
+                //server.updateLabelDelegate(server.textBox1, ex.StackTrace + Environment.NewLine, true);
             }
         }
 
@@ -181,7 +175,7 @@ namespace TCPAsync
                     int end = msg.IndexOf(endInd, start);
                     if (end >= 0)
                     {
-                        server.updateLabelDelegate(server.textBox1, msg.Substring(start + startInd.Length, end - start - startInd.Length), true);
+                        //server.updateLabelDelegate(server.textBox1, msg.Substring(start + startInd.Length, end - start - startInd.Length).Length.ToString(), true);
                         msg = msg.Remove(0, end + endInd.Length);
                     }
                 }
